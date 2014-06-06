@@ -10,18 +10,25 @@ import java.io.InputStream;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JOptionPane;
 
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
 public class BinaryDigitRecognizer extends JFrame
 {
-
+    String template;
     OneZeroClassifier oneZero;
 
     public BinaryDigitRecognizer() throws Exception
     {
         oneZero = new OneZeroClassifier();
+        InputStream is = getClass().getResourceAsStream("/OneZero_template.arff");
+        byte[] buf = new byte[is.available()];
+        is.read(buf);
+        template = new String(buf);
     }
 
     public void launch() throws Exception 
@@ -29,6 +36,7 @@ public class BinaryDigitRecognizer extends JFrame
         final DrawPanel panel = new DrawPanel();
         JButton clear = new JButton("Clear");
         JButton predict = new JButton("Predict");
+        JLabel label = new JLabel("Write 0 or 1 in the below blue color box");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel.setPreferredSize(new Dimension(80,80));
@@ -53,19 +61,17 @@ public class BinaryDigitRecognizer extends JFrame
 
         predict.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
- {
+            {
                 byte[] buf = null;
                 try {
-
-                    InputStream is = getClass().getResourceAsStream("/OneZero_template.arff");
-                    buf = new byte[is.available()];
-                    is.read(buf);
-                    String str = new String(buf);
-                    str = str + "\n" + panel.toString();
+                    String str = template + "\n" + panel.toString();
                     Instances pred = DataSource.read(new ByteArrayInputStream(str.getBytes()));
                     pred.setClassIndex(0);
-                    double fDistribution = oneZero.getClassifier().classifyInstance(pred.firstInstance());
-                    System.out.println(fDistribution + " = Pred");
+                    int result = (int)oneZero.getClassifier().classifyInstance(pred.firstInstance());
+                    System.out.println(panel.toString());
+                    System.out.println("The result is: " + result);
+                    JOptionPane.showMessageDialog(BinaryDigitRecognizer.this, "The written digit is: " + result,
+                            "Prediction", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -77,16 +83,26 @@ public class BinaryDigitRecognizer extends JFrame
         cc.setLayout(gl);
         
         gl.setHorizontalGroup(gl.createParallelGroup()
-                .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGroup(gl.createSequentialGroup()
+                    .addGap(20)
+                    .addComponent(label)
+                    .addGap(20))
+                .addComponent(panel, Alignment.CENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGroup(Alignment.CENTER, gl.createSequentialGroup()
                     .addComponent(clear)
+                    .addGap(20)
                     .addComponent(predict)));
 
         gl.setVerticalGroup(gl.createSequentialGroup()
+                .addGap(20)
+                .addComponent(label)
+                .addGap(20)
                 .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGap(20)
                 .addGroup(gl.createParallelGroup()
                         .addComponent(clear)
-                        .addComponent(predict)));
+                        .addComponent(predict))
+                        .addGap(20));
 
         pack();
         setVisible(true);
