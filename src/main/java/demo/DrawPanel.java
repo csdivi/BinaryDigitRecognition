@@ -9,12 +9,17 @@ import javax.swing.JPanel;
 
 public class DrawPanel extends JPanel
 {
-    int[][] data = new int[8][8];
+    static int COLOR_BLACK = 16;
+    static int COLOR_WHITE = 0;
+    
+    static int PIXEL_WIDTH = 10;
+    static int NUMBER_OF_PIXELS = 8;
+    int[][] data = new int[NUMBER_OF_PIXELS][NUMBER_OF_PIXELS];
 
     DrawPanel()
     {
-        setPreferredSize(new Dimension(80,80));
-        setSize(80, 80);
+        setPreferredSize(new Dimension(NUMBER_OF_PIXELS * PIXEL_WIDTH, NUMBER_OF_PIXELS * PIXEL_WIDTH));
+        setSize(NUMBER_OF_PIXELS * PIXEL_WIDTH, NUMBER_OF_PIXELS * PIXEL_WIDTH);
         setBorder(BorderFactory.createLineBorder(Color.BLUE));
         clear();
     }
@@ -26,17 +31,17 @@ public class DrawPanel extends JPanel
 
     public void clear()
     {
-        for (int i=0; i<8; ++i)
-            for (int j=0; j<8; ++j)
-                data[i][j] = 0;
+        for (int i=0; i<NUMBER_OF_PIXELS; ++i)
+            for (int j=0; j<NUMBER_OF_PIXELS; ++j)
+                data[i][j] = COLOR_WHITE;
     }
 
     public String toString()
     {
         StringBuilder sb = new StringBuilder("?,");
-        for (int i=0; i<8; ++i)
+        for (int i=0; i<NUMBER_OF_PIXELS; ++i)
         {
-            for (int j=0; j<8; ++j)
+            for (int j=0; j<NUMBER_OF_PIXELS; ++j)
                 sb.append(data[j][i]+",");
         }
         return sb.toString();
@@ -44,19 +49,19 @@ public class DrawPanel extends JPanel
 
     public void fillPixel(int x, int y)
     {
-        if (x > 80 || x < 0 || y > 80 || y < 0) return;
-        data[(x+9)/10 - 1][(y+9)/10 - 1] = 16;
+        if (x > NUMBER_OF_PIXELS * PIXEL_WIDTH || x < 0 || y > NUMBER_OF_PIXELS * PIXEL_WIDTH || y < 0) return;
+        data[(x+PIXEL_WIDTH)/PIXEL_WIDTH - 1][(y+PIXEL_WIDTH)/PIXEL_WIDTH - 1] = COLOR_BLACK;
     }
 
     @Override
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        for (int i=0; i<8; ++i)
+        for (int i=0; i<NUMBER_OF_PIXELS; ++i)
         {
-            for (int j=0; j<8; ++j)
+            for (int j=0; j<NUMBER_OF_PIXELS; ++j)
             {
-                if (data[i][j] == 16)
+                if (data[i][j] == COLOR_BLACK)
                 {
                     drawPixel(g,i,j);
                 }
@@ -67,8 +72,8 @@ public class DrawPanel extends JPanel
     private void drawPixel(Graphics g, int i, int j)
     {
         g.setColor(Color.BLACK);
-        int x = i * 10;
-        int y = j * 10;
-        g.fillRect(x, y, 10, 10);
+        int x = i * PIXEL_WIDTH;
+        int y = j * PIXEL_WIDTH;
+        g.fillRect(x, y, PIXEL_WIDTH, PIXEL_WIDTH);
     }
 }

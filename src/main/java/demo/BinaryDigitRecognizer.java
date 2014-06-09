@@ -1,7 +1,6 @@
 package demo;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
@@ -19,6 +18,7 @@ import weka.core.converters.ConverterUtils.DataSource;
 
 public class BinaryDigitRecognizer extends JFrame
 {
+    static int COMPONENT_GAP = 20;
     String template;
     OneZeroClassifier oneZero;
 
@@ -39,7 +39,6 @@ public class BinaryDigitRecognizer extends JFrame
         JLabel label = new JLabel("Write 0 or 1 in the below blue color box");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        panel.setPreferredSize(new Dimension(80,80));
 
         panel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt)
@@ -62,12 +61,14 @@ public class BinaryDigitRecognizer extends JFrame
         predict.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                byte[] buf = null;
-                try {
+                try
+                {
+                    int result;
                     String str = template + "\n" + panel.toString();
                     Instances pred = DataSource.read(new ByteArrayInputStream(str.getBytes()));
+
                     pred.setClassIndex(0);
-                    int result = (int)oneZero.getClassifier().classifyInstance(pred.firstInstance());
+                    result = (int)oneZero.getClassifier().classifyInstance(pred.firstInstance());
                     System.out.println(panel.toString());
                     System.out.println("The result is: " + result);
                     JOptionPane.showMessageDialog(BinaryDigitRecognizer.this, "The written digit is: " + result,
@@ -84,25 +85,25 @@ public class BinaryDigitRecognizer extends JFrame
         
         gl.setHorizontalGroup(gl.createParallelGroup()
                 .addGroup(gl.createSequentialGroup()
-                    .addGap(20)
+                    .addGap(COMPONENT_GAP)
                     .addComponent(label)
-                    .addGap(20))
+                    .addGap(COMPONENT_GAP))
                 .addComponent(panel, Alignment.CENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGroup(Alignment.CENTER, gl.createSequentialGroup()
                     .addComponent(clear)
-                    .addGap(20)
+                    .addGap(COMPONENT_GAP)
                     .addComponent(predict)));
 
         gl.setVerticalGroup(gl.createSequentialGroup()
-                .addGap(20)
+                .addGap(COMPONENT_GAP)
                 .addComponent(label)
-                .addGap(20)
+                .addGap(COMPONENT_GAP)
                 .addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGap(20)
+                .addGap(COMPONENT_GAP)
                 .addGroup(gl.createParallelGroup()
                         .addComponent(clear)
                         .addComponent(predict))
-                        .addGap(20));
+                        .addGap(COMPONENT_GAP));
 
         pack();
         setVisible(true);
