@@ -69,8 +69,9 @@ public class BinaryDigitRecognizer extends JFrame
 
                     pred.setClassIndex(0);
                     result = (int)oneZero.getClassifier().classifyInstance(pred.firstInstance());
+                    double prob[] = oneZero.getClassifier().distributionForInstance(pred.firstInstance());
                     System.out.println(panel.toString());
-                    System.out.println("The result is: " + result);
+                    System.out.println("The result is: " + result + ", with "+prob[result]*100+"% confidence.");
                     JOptionPane.showMessageDialog(BinaryDigitRecognizer.this, "The written digit is: " + result,
                             "Prediction", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e1) {
